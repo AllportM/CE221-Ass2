@@ -1,0 +1,9 @@
+If there are many occurrences of one or more word, the chart will need scaling, using one asterisk for
+every n occurrences. If you do this, your output must indicate the scaling and the actual numbers
+should be shown alongside the bars, as seen above. To gain maximum marks the scaling factor should
+be chosen so that 20 asterisks are used for the word with most occurrences (so for example if the most
+frequent word occurs 98 times you would use 1 asterisk for 1 to 5 occurrences, 2 for 6 to 10
+occurrences , and 20 asterisks for 96 to 100 occurrences). The word file will contain at least one word
+that does not occur in the text; such words should be distinguishable from words that do occur, so a
+word that appears in the text must have at least one asterisk in the chart, but words that do not occur
+should have no asterisks. The leftmost column of asterisks should be aligned as shown above.
