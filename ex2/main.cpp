@@ -8,11 +8,15 @@
 
 #include <iostream>
 #include <algorithm>
+#include <map>
+#include <vector>
 #include "LowerCaseFilter.h"
 #include "OneLetterOnePuncFilter.h"
 #include "TwoLetterOneNumberFilter.h"
 
 using namespace std;
+
+bool mapCompare(const pair<string, int> first, const pair<string, int> second);
 
 int main()
 {
@@ -28,7 +32,7 @@ int main()
     while(!temp)
     {
         if (filename == "q") exit(1);
-        cout << "Invalid filename '" << filename << "'" << endl << "Please re-enter "
+        cout << endl << "Invalid filename '" << filename << "'" << endl << "Please re-enter "
         << "the filename, or type 'q' to quit:" << endl << "> ";
         getline(cin, filename);
         temp.open(filename);
@@ -47,7 +51,7 @@ int main()
         getline(cin, filterString); // attains input for option to be tested
 
         // engages loop to attain correct input
-        while (!(filterString == "1" && filterString == "2" && filterString == "3"))
+        while (!(filterString == "1" || filterString == "2" || filterString == "3"))
         {
             if (filterString == "q") exit(1);
             cout << endl <<"Invalid input '" << filterString << "' Please enter 1, 2, 3 or q"
@@ -70,18 +74,19 @@ int main()
                 break;
         }
 
-        unordered_map<string, int> foundWords;
-        string found;
-        while(found = filter->getNextFilteredWord() && found != "")
+        map<string, int> foundWords;
+        string found = filter->getNextFilteredWord();
+        while(found != "")
         {
             ++foundWords[found];
+            found = filter->getNextFilteredWord();
         }
 
         // outputs the total number of occurrences of all words
         int wordCount = 0;
-        cout << endl << "Total words found:" << endl;
-        unordered_map<string, int>::const_iterator it;
-        for (it = foundWords.begin(); it != foundWords.end() it++)
+        cout << endl << "All words found and their frequencies:" << endl;
+        map<string, int>::iterator it;
+        for (it = foundWords.begin(); it != foundWords.end(); it++)
         {
             cout << "> " << it->first << ": " << it->second << endl;
             wordCount++;
@@ -89,44 +94,88 @@ int main()
         if (wordCount == 0) cout << "> None found" << endl;
         if (wordCount > 0)
         {
-            cout << endl << "Total words found: " << foundWords.size() << endl;
-            sort(foundWords.begin(), foundWords.end(), mapCompare())
-            string topThree = "First";
-            wordCount = 0;
-            int multipleOcc = 0;
-            int thirdPrintedCount = 0;
-            it = foundWords.begin();
-            unordered_map<string, int>::const_iterator it2 = foundWords.begin()+1;
-            while(wordCount < 3)
+            cout << endl << "Total # of words found: " << foundWords.size() << endl;
+            int numPrinted = 0;
+            int lastPrintedWC = 0;
+            int initialWordsSize = foundWords.size();
+            bool done = false;
+            cout << endl << "Top most occurring words:" << endl;
+            while(!done)
             {
-                cout << endl << topThree << " highest occurring word:" << endl <<
-                "> " << it->first << ": " << it->second << endl;
-                while(it->second == it2->second)
+                int maxi = 0;
+                map<string, int>::iterator maxiIt = foundWords.begin();
+                while (maxiIt != foundWords.end())
                 {
-                    if (wordCount != 2)
+                    if (maxiIt->second > maxi)
                     {
-                        multipleOcc++;
+                        maxi = maxiIt->second;
+                        it = maxiIt;
                     }
-                    else
-                    {
-                        if(thirdPrintedCount < 10)
-                        {
-                            cout << "> " << it2->first << ": " << it2->second << endl;
-                            thirdPrintedCount++;
-                        }
-                        else
-                        {
-                            multipleOcc++;
-                        }
-                    }
-                    it2++;
-                    if (multipleOcc > 0) cout << "> Plus " << multipleOcc << " more."
-                    << endl;
+                    maxiIt++;
                 }
-                it++;
-                it2 = it+1;
-                topThree = (wordCount == 2)? "Second": "Third";
+                if (numPrinted < 3 || (maxi == lastPrintedWC && numPrinted < 12))
+                {
+                    cout << "> " << it->first << ": " << it->second << endl;
+                    numPrinted++;
+                    lastPrintedWC = maxi;
+                    foundWords.erase(it);
+                }
+                else if (maxi == lastPrintedWC)
+                {
+                    numPrinted++;
+                    foundWords.erase(it);
+                }
+                else
+                {
+                    done = true;
+                }
+                if (numPrinted > initialWordsSize)
+                {
+                    done = true;;
+                    cout << "test" << " " << foundWords.size() << ", " << numPrinted;
+                }
             }
+            if (numPrinted > 12)
+            {
+                cout << "And " << numPrinted - 12 << " more words.";
+            }
+//            sort(foundWords.begin(), foundWords.end(), mapCompare);
+//            string topThree = "First";
+//            wordCount = 0;
+//            int multipleOcc = 0;
+//            int thirdPrintedCount = 0;
+//            unordered_map<string, int>::const_iterator it2 = foundWords.begin();
+//            it = it2++;
+//            while(wordCount < 3)
+//            {
+//                cout << endl << topThree << " highest occurring word:" << endl <<
+//                "> " << it->first << ": " << it->second << endl;
+//                while(it->second == it2->second)
+//                {
+//                    if (wordCount != 2)
+//                    {
+//                        multipleOcc++;
+//                    }
+//                    else
+//                    {
+//                        if(thirdPrintedCount < 10)
+//                        {
+//                            cout << "> " << it2->first << ": " << it2->second << endl;
+//                            thirdPrintedCount++;
+//                        }
+//                        else
+//                        {
+//                            multipleOcc++;
+//                        }
+//                    }
+//                    it2++;
+//                    if (multipleOcc > 0) cout << "> Plus " << multipleOcc << " more."
+//                    << endl;
+//                }
+//                it2 = it;
+//                it = it2++;
+//                topThree = (wordCount == 2)? "Second": "Third";
+//            }
         }
     }
 }

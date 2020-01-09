@@ -44,3 +44,12 @@
 	<string>
 	"ReadFilteredWords.h"
 
+1578410292 source:e:\m drive\second year\ce221 - c++\assignment 2\ex2\main.cpp
+	<iostream>
+	<algorithm>
+	<map>
+	<vector>
+	"LowerCaseFilter.h"
+	"OneLetterOnePuncFilter.h"
+	"TwoLetterOneNumberFilter.h"
+
